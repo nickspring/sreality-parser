@@ -1,0 +1,25 @@
+---
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    hostname: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data:rw
+    env_file: config.env
+  parser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    entrypoint: /bin/bash -c "bash /app/entrypoint.sh"
+    tty: true
+    env_file: config.env
+volumes:
+  pgdata: {}
